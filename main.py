@@ -19,17 +19,26 @@ def draw_humans():
 health_bars = [pygame.image.load(img) for img in ['./hud/health_high.svg', './hud/health_medium.svg', './hud/health_low.svg']]
 for i in range(len(health_bars)):
     ratio = health_bars[i].get_height() / health_bars[i].get_width()
-    health_bars[i] = pygame.transform.smoothscale(health_bars[i], (HEALTH_BAR_WIDTH, HEALTH_BAR_WIDTH * ratio))
+    health_bars[i] = pygame.transform.smoothscale(health_bars[i], (BAR_WIDTH, BAR_WIDTH * ratio))
+    
+xp_bars = [pygame.image.load(img) for img in ['./hud/experience_high.svg', './hud/experience_medium.svg', './hud/experience_low.svg']]
+for i in range(len(xp_bars)):
+    ratio = xp_bars[i].get_height() / xp_bars[i].get_width()
+    xp_bars[i] = pygame.transform.smoothscale(xp_bars[i], (BAR_WIDTH, BAR_WIDTH * ratio))
+    
 def draw_hud():
-    player_health = player.health
-    if player_health >= 90:
-        health_img = health_bars[0]
-    elif player_health >= 30:
-        health_img = health_bars[1]
-    else:
-        health_img = health_bars[2]
+    health_outline_rect = pygame.Rect(25, 25, BAR_WIDTH, BAR_HEIGHT)
+    health_rect = pygame.Rect(25, 25, BAR_WIDTH * (player.health/player.max_health), BAR_HEIGHT)
+    health_color = (0, 255, 0) if player.health >= 40 else (255, 0, 0)
+    pygame.draw.rect(w, health_color, health_rect)
+    pygame.draw.rect(w, (0, 0, 0), health_outline_rect, width=5)
 
-    w.blit(health_img, (0, -health_img.get_height()*0.2))
+    xp_outline_rect = health_outline_rect.copy()
+    xp_outline_rect.x = w.get_width()-BAR_WIDTH-25
+    xp_rect = xp_outline_rect.copy()
+    xp_rect.width = (player.experience / 100) * 100
+    pygame.draw.rect(w, (255, 255, 0), xp_rect)
+    pygame.draw.rect(w, (255, 165, 0), xp_outline_rect, width=5)
 
 def draw_screen():
     game_state = common.game_state

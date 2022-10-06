@@ -1,28 +1,30 @@
 import pygametools as pt
 from pygametools import V, get_rel
-import pygame, math
+import pygame, math, random
 
 import common
 from common import *
 
 class Weapon:
     def __init__(self, name, damage, range, cooldown, img=None):
-        self.name=name
-        self.damage=damage
-        self.range=range
-        self.cooldown=cooldown
-        self.image=pygame.image.load(img) if img else pygame.Surface((0,0))
-        self.scaled=pygame.transform.smoothscale(self.image, (DRAW_SIZE, DRAW_SIZE))
+        self.name = name
+        self.damage = damage
+        self.range = range
+        self.cooldown = cooldown
+        self.image = pygame.image.load(img) if img else pygame.Surface((0,0))
+        self.scaled = pygame.transform.smoothscale(self.image, (DRAW_SIZE, DRAW_SIZE))
+        self.final_img = self.scaled
     
 class Creature:
-    def __init__(self, name, weapon, max_health, max_strength, img, pos=V(0,0)):
+    def __init__(self, name, weapon, max_health, max_strength, xp_on_death, img, pos=V(0,0)):
         self.name = name
         self.weapon = weapon
         self.max_health = max_health
         self.max_strength = max_strength
         self.health = max_health
         self.strength = max_strength
-        self.attack_cooldown = 0
+        self.attack_cooldown = self.weapon.cooldown
+        self.xp_on_death = xp_on_death
         
         self.image = pygame.image.load(img)
         self.scaled = pygame.transform.smoothscale(self.image, (DRAW_SIZE, DRAW_SIZE))
@@ -47,6 +49,7 @@ class Creature:
     def die(self):
         print("{} is dead".format(self.name))
         game_creatures.remove(self)
+        player.experience += self.xp_on_death
         del self
 
     def draw(self,surf):
@@ -55,15 +58,16 @@ class Creature:
         point=V(self.rel.x-half.x, self.rel.y-half.y)
         
         if pygame.Rect(point.x, point.y, final.get_width(), final.get_height()).colliderect(surf.get_rect()): # if on screen
-            surf.blit(self.weapon.scaled, point.aslist)
+            surf.blit(self.weapon.final_img, point.aslist)
             surf.blit(final,point.aslist)
 
     def look_at_point(self,point):
         dir=pt.delta(self.rel,point)
         angle=pt.delta_to_degrees(dir) + 90
-        if self.rot!=angle:
-            self.rot=angle
-            self.final_img=pygame.transform.rotate(self.scaled,self.rot) # resized and rotated image
+        if self.rot!= angle:
+            self.rot = angle
+            self.final_img = pygame.transform.rotate(self.scaled, self.rot) # resized and rotated image
+            self.weapon.final_img = pygame.transform.rotate(self.weapon.scaled, self.rot+90)
 
     def move(self,dx,dy,speed):
         move_vec=V(dx,dy).normalized(speed)
@@ -83,7 +87,8 @@ class Human(Creature):
         self.max_health = 100
         self.strength = 10
         self.max_strength = 10
-        self.attack_cooldown = 0
+        self.attack_cooldown = self.weapon.cooldown
+        self.experience = 0
         
         self.image = pygame.image.load("./mobs/human.svg")
         self.scaled = pygame.transform.smoothscale(self.image, (DRAW_SIZE, DRAW_SIZE))
@@ -98,7 +103,21 @@ class Human(Creature):
         common.game_state = 'game over'
         del self
 
+def spawn_creature(template, pos):
+    game_creatures.append(Creature(template[0], Weapon(*template[1]), *template[2:6], pos))
+
+def spawn_creatures(template, n):
+    center = player.pos
+    for i in range(n):
+        p = V(random.randint(center.x - SPAWN_RADIUS, center.x + SPAWN_RADIUS), 
+             random.randint(center.y - SPAWN_RADIUS, center.y + SPAWN_RADIUS))
+        in_screen = w_rect.collidepoint(p.aslist)
+        while pt.dist(p, center) > SPAWN_RADIUS and in_screen:
+            p = V(random.randint(center.x - SPAWN_RADIUS, center.x + SPAWN_RADIUS), 
+             random.randint(center.y - SPAWN_RADIUS, center.y + SPAWN_RADIUS))
+
+        spawn_creature(template, p)
+        
 player = Human('Player', Weapon(*weapons['stick']))
 
-template=creature_types['zombie']
-game_creatures.append(Creature(template[0], Weapon(*template[1]), template[2], template[3], template[4], V(50,50)))
+spawn_creatures(creature_types['zombie'], 5)

@@ -26,24 +26,26 @@ NUM_TILES = max(width, height)//TILE_SIZE + 1
 DRAW_SIZE = 120
 
 # HUD drawing
-HEALTH_BAR_WIDTH = 200
+BAR_WIDTH = 200
+BAR_HEIGHT = 30
 
 # in game player
 SPEED=0.3
+SPAWN_RADIUS=500
 
 # game over
 GAME_OVER_IMG = pygame.image.load("./hud/game_over.svg")
 
 weapons = {
     'stick': ['stick', 5, 1, 400, './weapons/stick.svg'],
-    'axe': ['axe', 15, 2, 1000, './weapons/axe.svg'],
+    'axe': ['axe', 5, 2, 1000, './weapons/axe.svg'],
     'null': ['null', 0, 0, 0]
 }
 
 creature_types = {
-    'zombie': ['Zombie', weapons['axe'], 25, 10, './mobs/zombie.svg'],
-    'ice_zombie': ['Ice Zombie', weapons['axe'], 30, 15, './mobs/ice_zombie.svg'],
-    'fire_zombie': ['Fire Zombie', weapons['axe'], 40, 20, './mobs/fire_zombie.svg']
+    'zombie': ['Zombie', weapons['axe'], 25, 5, 10, './mobs/zombie.svg'],
+    'ice_zombie': ['Ice Zombie', weapons['axe'], 30, 10, 10, './mobs/ice_zombie.svg'],
+    'fire_zombie': ['Fire Zombie', weapons['axe'], 40, 20, 10, './mobs/fire_zombie.svg']
 }
 
 game_humans = []
