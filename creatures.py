@@ -11,7 +11,7 @@ class Weapon:
         self.damage = damage
         self.range = range
         self.cooldown = cooldown
-        self.image = pygame.image.load(img) if img else pygame.Surface((0,0))
+        self.image = pygame.image.load(img) if img else pygame.Surface((10, 10), pygame.SRCALPHA); self.image.convert_alpha()
         self.scaled = pygame.transform.smoothscale(self.image, (DRAW_SIZE, DRAW_SIZE))
         self.final_img = self.scaled
     

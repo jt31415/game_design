@@ -28,20 +28,40 @@ for i in range(len(xp_bars)):
     xp_bars[i] = pygame.transform.smoothscale(xp_bars[i], (BAR_WIDTH, BAR_WIDTH * ratio))
     
 def draw_hud():
+    # draw the health bar
     health_outline_rect = pygame.Rect(25, 25, BAR_WIDTH, BAR_HEIGHT)
-    health_rect = pygame.Rect(25, 25, BAR_WIDTH * (player.health/player.max_health), BAR_HEIGHT)
+    health_rect = health_outline_rect.copy()
+    health_rect.width = (player.health / player.max_health) * BAR_WIDTH
     health_color = (0, 255, 0) if player.health >= 40 else (255, 0, 0)
     pygame.draw.rect(w, health_color, health_rect)
     pygame.draw.rect(w, (0, 0, 0), health_outline_rect, width=5)
 
+    # draw the xp bar
     xp_outline_rect = health_outline_rect.copy()
     xp_outline_rect.x = w.get_width()-BAR_WIDTH-25
     xp_rect = xp_outline_rect.copy()
     xp_rect.width = (player.experience / 100) * BAR_WIDTH
     pygame.draw.rect(w, (255, 255, 0), xp_rect)
     pygame.draw.rect(w, (255, 165, 0), xp_outline_rect, width=5)
-    pt.centertext(FONT, str(player.level), (0,0,0), w, xp_outline_rect)
+    pt.centertext(FONT, str(player.level), (0,0,0), w, xp_outline_rect) # draw the xp level
 
+    # draw the weapon
+    bounding_rect = player.weapon.scaled.get_bounding_rect()
+    weapon_rect = bounding_rect.copy()
+    center = (w.get_width()/2, w.get_height()-(weapon_rect.height/2)-25)
+    weapon_rect.center = center
+    cropped = pygame.Surface(weapon_rect.size, pygame.SRCALPHA)
+    cropped.convert_alpha()
+    cropped.blit(player.weapon.scaled, (0, 0), bounding_rect)
+
+    w.blit(cropped, weapon_rect.topleft)
+
+    # manipulate rect before rendering for padding and square
+    side = max(weapon_rect.size) + 15
+    weapon_rect.update((0, 0), (side, side))
+    weapon_rect.center = center
+    pygame.draw.rect(w, (0,0,0), weapon_rect, 5)
+    
 def draw_screen():
     game_state = common.game_state
     if game_state == 'play':
@@ -101,6 +121,7 @@ def main_loop(attack):
 i=0 # DEBUG
 
 # start the game
+pygame.time.set_timer(pygame.USEREVENT, 10000)
 
 attack = False
 running = True
@@ -110,6 +131,8 @@ while running:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             attack=True
+        elif event.type == pygame.USEREVENT:
+            spawn.spawn_creatures(common.creature_types['zombie'], 5)
             
     if common.game_state == 'play':
         # movement

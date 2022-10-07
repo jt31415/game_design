@@ -9,6 +9,8 @@ from common import *
 
 def spawn_creatures(template, n):
     center = player.pos
+    center.x = int(center.x)
+    center.y = int(center.y)
     for i in range(n):
         p = V(random.randint(center.x - SPAWN_RADIUS, center.x + SPAWN_RADIUS), 
              random.randint(center.y - SPAWN_RADIUS, center.y + SPAWN_RADIUS))

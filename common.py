@@ -39,13 +39,13 @@ SPAWN_RADIUS=500
 GAME_OVER_IMG = pygame.image.load("./hud/game_over.svg")
 
 weapons = {
-    'stick': ['stick', 5, 1, 400, './weapons/stick.svg'],
-    'axe': ['axe', 5, 2, 1000, './weapons/axe.svg'],
-    'null': ['null', 0, 0, 0]
+    'stick': ['stick', 5, 1, 200, './weapons/stick.svg'],
+    'axe': ['axe', 10, 2, 1000, './weapons/axe.svg'],
+    'null': ['null', 0, 1, 500]
 }
 
 creature_types = {
-    'zombie': ['Zombie', weapons['stick'], 25, 5, 10, './mobs/zombie.svg'],
+    'zombie': ['Zombie', weapons['null'], 10, 5, 10, './mobs/zombie.svg'],
     'ice_zombie': ['Ice Zombie', weapons['axe'], 30, 10, 10, './mobs/ice_zombie.svg'],
     'fire_zombie': ['Fire Zombie', weapons['axe'], 40, 20, 10, './mobs/fire_zombie.svg']
 }
