@@ -142,3 +142,56 @@ def get_rel(point, center, window_size):
     temp.x+=int(window_size[0]/2+0.5)
     temp.y+=int(window_size[1]/2+0.5)
     return temp
+
+#from pygame wiki
+def draw_text(surface, text, color, rect, font, aa=False, bkg=None):
+    rect = pygame.Rect(rect)
+    y = rect.top
+    lineSpacing = -2
+    fontHeight = font.size('Jy')[1]
+
+    while text:
+        i = 1
+
+        # determine if the row of text will be outside our area
+        if y + fontHeight > rect.bottom:
+            break
+
+        # determine maximum width of line
+        while font.size(text[:i])[0] < rect.width and i < len(text):
+            i += 1
+
+        # if we've wrapped the text, then adjust the wrap to the last word      
+        if i < len(text): 
+            i = text.rfind(" ", 0, i) + 1
+
+        # render the line and blit it to the surface
+        if bkg:
+            image = font.render(text[:i], 1, color, bkg)
+            image.set_colorkey(bkg)
+        else:
+            image = font.render(text[:i], aa, color)
+
+        surface.blit(image, (rect.left, y))
+        y += fontHeight + lineSpacing
+
+        # remove the text we just blitted
+        text = text[i:]
+      
+    return text
+
+def centertext(font, t, color, surf, rect, aa=False, center='c'):
+  s=font.render(t,aa,color)
+  size=s.get_size()
+  rect=pygame.Rect(rect)
+  w,h=rect.size
+  l,top=rect.left,rect.top
+  if center=='c': # aligned to the center of the image
+    pos=(l+w//2-size[0]//2,top+h//2-size[1]//2)
+  elif center=='t': # aligned to the top center of the image
+    pos=(l+w//2-size[0]//2,top+h//2)
+  elif center=='b': # aligned to the bottom center of the image
+    pos=(l+w//2-size[0]//2,top+h//2-size[1])
+  else:
+    print("unknown center argument")
+  surf.blit(s,pos)

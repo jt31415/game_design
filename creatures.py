@@ -49,7 +49,7 @@ class Creature:
     def die(self):
         print("{} is dead".format(self.name))
         game_creatures.remove(self)
-        player.experience += self.xp_on_death
+        player.gain_xp(self.xp_on_death)
         del self
 
     def draw(self,surf):
@@ -85,10 +85,11 @@ class Human(Creature):
         self.weapon = weapon
         self.health = 100
         self.max_health = 100
-        self.strength = 10
-        self.max_strength = 10
+        self.strength = 20
+        self.max_strength = 20
         self.attack_cooldown = self.weapon.cooldown
         self.experience = 0
+        self.level = 0
         
         self.image = pygame.image.load("./mobs/human.svg")
         self.scaled = pygame.transform.smoothscale(self.image, (DRAW_SIZE, DRAW_SIZE))
@@ -98,6 +99,12 @@ class Human(Creature):
         self.pos=pos
         self.rot=0
 
+    def gain_xp(self, xp):
+        self.experience+=xp
+        if self.experience>=100:
+            self.level += self.experience // 100
+            self.experience %= 100
+
     def die(self):
         print("{} is dead".format(self.name))
         common.game_state = 'game over'
@@ -106,18 +113,4 @@ class Human(Creature):
 def spawn_creature(template, pos):
     game_creatures.append(Creature(template[0], Weapon(*template[1]), *template[2:6], pos))
 
-def spawn_creatures(template, n):
-    center = player.pos
-    for i in range(n):
-        p = V(random.randint(center.x - SPAWN_RADIUS, center.x + SPAWN_RADIUS), 
-             random.randint(center.y - SPAWN_RADIUS, center.y + SPAWN_RADIUS))
-        in_screen = w_rect.collidepoint(p.aslist)
-        while pt.dist(p, center) > SPAWN_RADIUS and in_screen:
-            p = V(random.randint(center.x - SPAWN_RADIUS, center.x + SPAWN_RADIUS), 
-             random.randint(center.y - SPAWN_RADIUS, center.y + SPAWN_RADIUS))
-
-        spawn_creature(template, p)
-        
 player = Human('Player', Weapon(*weapons['stick']))
-
-spawn_creatures(creature_types['zombie'], 5)

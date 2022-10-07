@@ -6,6 +6,7 @@ from pygametools import V
 import common
 from common import * # imports all the common vars
 
+import spawn
 from creatures import player
 
 def draw_creatures():
@@ -36,9 +37,10 @@ def draw_hud():
     xp_outline_rect = health_outline_rect.copy()
     xp_outline_rect.x = w.get_width()-BAR_WIDTH-25
     xp_rect = xp_outline_rect.copy()
-    xp_rect.width = (player.experience / 100) * 100
+    xp_rect.width = (player.experience / 100) * BAR_WIDTH
     pygame.draw.rect(w, (255, 255, 0), xp_rect)
     pygame.draw.rect(w, (255, 165, 0), xp_outline_rect, width=5)
+    pt.centertext(FONT, str(player.level), (0,0,0), w, xp_outline_rect)
 
 def draw_screen():
     game_state = common.game_state
@@ -98,7 +100,7 @@ def main_loop(attack):
         
 i=0 # DEBUG
 
-#initialize()
+# start the game
 
 attack = False
 running = True

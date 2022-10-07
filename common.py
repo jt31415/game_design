@@ -28,6 +28,8 @@ DRAW_SIZE = 120
 # HUD drawing
 BAR_WIDTH = 200
 BAR_HEIGHT = 30
+FONT = pygame.font.Font('./fonts/Zector.ttf', 25)
+FONT.bold = True
 
 # in game player
 SPEED=0.3
@@ -43,7 +45,7 @@ weapons = {
 }
 
 creature_types = {
-    'zombie': ['Zombie', weapons['axe'], 25, 5, 10, './mobs/zombie.svg'],
+    'zombie': ['Zombie', weapons['stick'], 25, 5, 10, './mobs/zombie.svg'],
     'ice_zombie': ['Ice Zombie', weapons['axe'], 30, 10, 10, './mobs/ice_zombie.svg'],
     'fire_zombie': ['Fire Zombie', weapons['axe'], 40, 20, 10, './mobs/fire_zombie.svg']
 }
