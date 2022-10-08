@@ -80,6 +80,9 @@ def draw_screen():
         draw_humans() # draw other humans
         draw_creatures() # draw other creatures
         draw_hud() # draw hud on top of everything
+
+    elif game_state == 'upgrade':
+        w.blit(saved_screen, (0,0))
         
     elif game_state == 'game over':
         w.fill((255,255,255))
@@ -121,6 +124,9 @@ def restart_game():
     global player
 
     common.game_state = 'play'
+    common.game_creatures.clear()
+    common.game_humans.clear()
+
     creatures.make_player()
     from creatures import player
     pygame.time.set_timer(pygame.USEREVENT, 10000) # spawn creatures
@@ -145,6 +151,12 @@ while running:
             if event.key == pygame.K_r:
                 if common.game_state == 'game over':
                     restart_game()
+            if event.key == pygame.K_e:
+                if common.game_state == 'play':
+                    common.game_state = 'upgrade'
+                    saved_screen = w.copy()
+                elif common.game_state == 'upgrade':
+                    common.game_state = 'play'
         elif event.type == pygame.USEREVENT + 1:
             if common.game_state == 'play':
                 player.health = min(player.health + 10, 100)
