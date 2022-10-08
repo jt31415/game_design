@@ -7,7 +7,7 @@ import common
 from common import * # imports all the common vars
 
 import spawn
-from creatures import player
+import creatures
 
 def draw_creatures():
     for creature in game_creatures:
@@ -116,11 +116,19 @@ def main_loop(attack):
         dist_to_player = pt.dist(player.pos, creature.pos)
         if dist_to_player < max_attack_range and creature.attack_cooldown <= 0:
             creature.attack(player)
+
+def restart_game():
+    global player
+
+    common.game_state = 'play'
+    creatures.make_player()
+    from creatures import player
+    pygame.time.set_timer(pygame.USEREVENT, 10000) # spawn creatures
+    pygame.time.set_timer(pygame.USEREVENT + 1, player.regen) # regen player
+
+restart_game()
         
 i=0 # DEBUG
-
-# start the game
-pygame.time.set_timer(pygame.USEREVENT, 10000)
 
 attack = False
 running = True
@@ -133,6 +141,13 @@ while running:
         elif event.type == pygame.USEREVENT:
             if common.game_state == 'play':
                 spawn.spawn_creatures(common.creature_types['zombie'], 5)
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                if common.game_state == 'game over':
+                    restart_game()
+        elif event.type == pygame.USEREVENT + 1:
+            if common.game_state == 'play':
+                player.health = min(player.health + 10, 100)
             
     if common.game_state == 'play':
         # movement

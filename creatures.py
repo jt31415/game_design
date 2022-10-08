@@ -85,6 +85,7 @@ class Human(Creature):
         self.weapon = weapon
         self.health = 100
         self.max_health = 100
+        self.regen = 2500
         self.strength = 20
         self.max_strength = 20
         self.attack_cooldown = self.weapon.cooldown
@@ -115,4 +116,6 @@ class Human(Creature):
 def spawn_creature(template, pos):
     game_creatures.append(Creature(template[0], Weapon(*template[1]), *template[2:6], pos))
 
-player = Human('Player', Weapon(*weapons['stick']))
+def make_player():
+    global player
+    player = Human('Player', Weapon(*weapons['stick']))
