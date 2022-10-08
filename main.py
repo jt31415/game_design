@@ -46,13 +46,10 @@ def draw_hud():
     pt.centertext(FONT, str(player.level), (0,0,0), w, xp_outline_rect) # draw the xp level
 
     # draw the weapon
-    bounding_rect = player.weapon.scaled.get_bounding_rect()
-    weapon_rect = bounding_rect.copy()
+    weapon_rect = player.weapon.scaled.get_bounding_rect()
     center = (w.get_width()/2, w.get_height()-(weapon_rect.height/2)-25)
     weapon_rect.center = center
-    cropped = pygame.Surface(weapon_rect.size, pygame.SRCALPHA)
-    cropped.convert_alpha()
-    cropped.blit(player.weapon.scaled, (0, 0), bounding_rect)
+    cropped = pt.crop_to_bounding(player.weapon.scaled)
 
     w.blit(cropped, weapon_rect.topleft)
 
@@ -86,8 +83,10 @@ def draw_screen():
         
     elif game_state == 'game over':
         w.fill((255,255,255))
-        w.blit(GAME_OVER_IMG, (0, 0))
-
+        pt.center_img(GAME_OVER_IMG, w, w_rect)
+        pt.centertext(FONT_BIG, 'GAME', (0,0,0), w, (0, 0, width, height/3))
+        pt.centertext(FONT_BIG, 'OVER', (0,0,0), w, (0, 2*height/3, width, height/3))
+        
     pygame.display.flip()
     c.tick(FPS)
 
@@ -132,7 +131,8 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             attack=True
         elif event.type == pygame.USEREVENT:
-            spawn.spawn_creatures(common.creature_types['zombie'], 5)
+            if common.game_state == 'play':
+                spawn.spawn_creatures(common.creature_types['zombie'], 5)
             
     if common.game_state == 'play':
         # movement

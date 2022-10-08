@@ -90,6 +90,7 @@ class Human(Creature):
         self.attack_cooldown = self.weapon.cooldown
         self.experience = 0
         self.level = 0
+        self.points = 0
         
         self.image = pygame.image.load("./mobs/human.svg")
         self.scaled = pygame.transform.smoothscale(self.image, (DRAW_SIZE, DRAW_SIZE))
@@ -103,6 +104,7 @@ class Human(Creature):
         self.experience+=xp
         if self.experience>=100:
             self.level += self.experience // 100
+            self.points += self.experience // 100
             self.experience %= 100
 
     def die(self):

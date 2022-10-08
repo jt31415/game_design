@@ -30,6 +30,8 @@ BAR_WIDTH = 200
 BAR_HEIGHT = 30
 FONT = pygame.font.Font('./fonts/Zector.ttf', 25)
 FONT.bold = True
+FONT_BIG = pygame.font.Font('./fonts/Zector.ttf', 80)
+FONT_BIG.bold = True
 
 # in game player
 SPEED=0.3

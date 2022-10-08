@@ -195,3 +195,26 @@ def centertext(font, t, color, surf, rect, aa=False, center='c'):
   else:
     print("unknown center argument")
   surf.blit(s,pos)
+
+def crop_to_bounding(img):
+    bounding_rect = img.get_bounding_rect()
+    surf = pygame.Surface(bounding_rect.size, pygame.SRCALPHA)
+    surf.convert_alpha()
+    surf.blit(img, (0,0), bounding_rect)
+
+    return surf
+
+def center_img(img, surf, rect, center='c'):
+    size=img.get_size()
+    rect=pygame.Rect(rect)
+    w, h=rect.size
+    l, top=rect.left,rect.top
+    if center=='c': # aligned to the center of the image
+        pos=(l+w//2-size[0]//2, top+h//2-size[1]//2)
+    elif center=='t': # aligned to the top center of the image
+        pos=(l+w//2-size[0]//2, top+h//2)
+    elif center=='b': # aligned to the bottom center of the image
+        pos=(l+w//2-size[0]//2, top+h//2-size[1])
+    else:
+        print("unknown center argument")
+    surf.blit(img, pos)
