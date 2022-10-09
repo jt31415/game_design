@@ -83,6 +83,8 @@ def draw_screen():
 
     elif game_state == 'upgrade':
         w.blit(saved_screen, (0,0))
+        w.blit(darkened_surf, (0,0))
+        w.blit(UPGRADE_GUI, (0,0))
         
     elif game_state == 'game over':
         w.fill((255,255,255))
@@ -155,6 +157,7 @@ while running:
                 if common.game_state == 'play':
                     common.game_state = 'upgrade'
                     saved_screen = w.copy()
+                    #saved_screen = saved_screen.convert_alpha()
                 elif common.game_state == 'upgrade':
                     common.game_state = 'play'
         elif event.type == pygame.USEREVENT + 1:

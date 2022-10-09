@@ -11,7 +11,7 @@ class Weapon:
         self.damage = damage
         self.range = range
         self.cooldown = cooldown
-        self.image = pygame.image.load(img) if img else pygame.Surface((10, 10), pygame.SRCALPHA); self.image.convert_alpha()
+        self.image = pygame.image.load(img) if img else pygame.Surface((10, 10), pygame.SRCALPHA); self.image = self.image.convert_alpha()
         self.scaled = pygame.transform.smoothscale(self.image, (DRAW_SIZE, DRAW_SIZE))
         self.final_img = self.scaled
     
@@ -26,7 +26,7 @@ class Creature:
         self.attack_cooldown = self.weapon.cooldown
         self.xp_on_death = xp_on_death
         
-        self.image = pygame.image.load(img)
+        self.image = pygame.image.load(img).convert_alpha()
         self.scaled = pygame.transform.smoothscale(self.image, (DRAW_SIZE, DRAW_SIZE))
         self.final_img = self.scaled
 
@@ -93,7 +93,7 @@ class Human(Creature):
         self.level = 0
         self.points = 0
         
-        self.image = pygame.image.load("./mobs/human.svg")
+        self.image = pygame.image.load("./mobs/human.svg").convert_alpha()
         self.scaled = pygame.transform.smoothscale(self.image, (DRAW_SIZE, DRAW_SIZE))
         self.final_img = self.scaled
 

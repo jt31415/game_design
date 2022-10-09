@@ -1,4 +1,7 @@
-import pygame, math
+import pygame
+import math
+import array
+import os
 
 def initialize():
   global w, game_space
@@ -218,3 +221,16 @@ def center_img(img, surf, rect, center='c'):
     else:
         print("unknown center argument")
     surf.blit(img, pos)
+
+# def draw_svg(filename):
+#     """draw .svg to pygame Surface"""
+#     svg = rsvg.Handle(file= os.path.join('data', filename))        
+#     dim = svg.get_dimension_data()
+#     width, height = dim[0], dim[1]
+
+#     blue = data[1::4]
+#     green = data[3::4]
+#     data[1::4] = green
+#     data[3::4] = blue
+#     svg.render_cairo(ctx)
+#     return pygame.image.frombuffer(data.tostring(), (width,height), "ARGB")
