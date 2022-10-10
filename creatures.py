@@ -93,7 +93,7 @@ class Human(Creature):
         self.level = 0
         self.points = 0
         
-        self.image = pygame.image.load("./mobs/human.svg").convert_alpha()
+        self.image = pygame.image.load("./mobs/human.png").convert_alpha()
         self.scaled = pygame.transform.smoothscale(self.image, (DRAW_SIZE, DRAW_SIZE))
         self.final_img = self.scaled
 

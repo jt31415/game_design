@@ -9,6 +9,15 @@ from common import * # imports all the common vars
 import spawn
 import creatures
 
+def draw_grid():
+    # draw grid (makes it look like grass tiles)
+    offset_x=int(player.pos.x%TILE_SIZE+0.5)
+    offset_y=int(player.pos.y%TILE_SIZE+0.5)
+    for x in range(-offset_x, width, TILE_SIZE):
+        pygame.draw.line(w, GRID_COLOR, (x,0), (x,height+TILE_SIZE), 5)
+    for y in range(-offset_y, height, TILE_SIZE):
+        pygame.draw.line(w, GRID_COLOR, (0,y), (width+TILE_SIZE,y), 5)
+
 def draw_creatures():
     for creature in game_creatures:
         creature.draw(w)
@@ -16,6 +25,26 @@ def draw_creatures():
 def draw_humans():
     for human in game_humans:
         human.draw(w)
+
+def draw_weapon(center, resize=None, outline=True):
+    if resize:
+        draw_weapon = pygame.transform.scale(player.weapon.scaled, (resize, resize))
+        draw_weapon = pt.crop_to_bounding(draw_weapon)
+    else:
+        draw_weapon = pt.crop_to_bounding(player.weapon.scaled)
+
+    # draw the weapon
+    weapon_rect = draw_weapon.get_rect()
+    weapon_rect.center = center
+
+    w.blit(draw_weapon, weapon_rect.topleft)
+
+    # manipulate rect before rendering for padding and square
+    if outline:
+        side = max(weapon_rect.size) + 15
+        weapon_rect.update((0, 0), (side, side))
+        weapon_rect.center = center
+        pygame.draw.rect(w, (0,0,0), weapon_rect, 5)
 
 health_bars = [pygame.image.load(img) for img in ['./hud/health_high.svg', './hud/health_medium.svg', './hud/health_low.svg']]
 for i in range(len(health_bars)):
@@ -45,32 +74,14 @@ def draw_hud():
     pygame.draw.rect(w, (255, 165, 0), xp_outline_rect, width=5)
     pt.centertext(FONT, str(player.level), (0,0,0), w, xp_outline_rect) # draw the xp level
 
-    # draw the weapon
-    weapon_rect = player.weapon.scaled.get_bounding_rect()
-    center = (w.get_width()/2, w.get_height()-(weapon_rect.height/2)-25)
-    weapon_rect.center = center
-    cropped = pt.crop_to_bounding(player.weapon.scaled)
+    draw_weapon((w.get_width()/2, w.get_height()-75))
 
-    w.blit(cropped, weapon_rect.topleft)
-
-    # manipulate rect before rendering for padding and square
-    side = max(weapon_rect.size) + 15
-    weapon_rect.update((0, 0), (side, side))
-    weapon_rect.center = center
-    pygame.draw.rect(w, (0,0,0), weapon_rect, 5)
-    
 def draw_screen():
     game_state = common.game_state
     if game_state == 'play':
         w.fill(ARENA_COLOR)
-    
-        # draw grid (makes it look like grass tiles)
-        offset_x=int(player.pos.x%TILE_SIZE+0.5)
-        offset_y=int(player.pos.y%TILE_SIZE+0.5)
-        for x in range(-offset_x, width, TILE_SIZE):
-            pygame.draw.line(w, GRID_COLOR, (x,0), (x,height+TILE_SIZE), 5)
-        for y in range(-offset_y, height, TILE_SIZE):
-            pygame.draw.line(w, GRID_COLOR, (0,y), (width+TILE_SIZE,y), 5)
+
+        draw_grid()
         
         # draw arena bounds
         #rect = pygame.Rect(*get_rel(V(-ARENA_SIZE, -ARENA_SIZE)).aslist,d_ARENA_SIZE,d_ARENA_SIZE).clip(w_rect).inflate(DRAW_SIZE, DRAW_SIZE)
@@ -85,6 +96,9 @@ def draw_screen():
         w.blit(saved_screen, (0,0))
         w.blit(darkened_surf, (0,0))
         w.blit(UPGRADE_GUI, (0,0))
+
+        pt.centertext(FONT, 'UPGRADE', (0,0,0), w, (0,10,width,50))
+        draw_weapon((195, 115), 140, outline=False)
         
     elif game_state == 'game over':
         w.fill((255,255,255))

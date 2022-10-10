@@ -98,7 +98,7 @@ class Map:
         print(self.get(V(x,y)),'\t',end='')
       print()
   def fill(self,item):
-    self.m=[[item for i in range(self.size[1])] for i in range(size[0])]
+    self.m=[[item for i in range(self.size[1])] for i in range(self.size[0])]
   def dist(self,i1,i2):
     fi1=self.multifind(i1)
     fi2=self.multifind(i2)
