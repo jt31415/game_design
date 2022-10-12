@@ -127,7 +127,7 @@ def main_loop(attack):
         if target:
             player.attack(target)
                 
-        creature.move(*pt.delta(creature.pos, player.pos).aslist, SPEED*0.1 * c.get_time())
+        creature.move(*pt.delta(creature.pos, player.pos).aslist, SPEED*0.2 * c.get_time())
         creature.look_at_point(player.rel)
 
         # mobs attack player
