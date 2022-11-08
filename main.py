@@ -113,21 +113,21 @@ def main_loop(attack):
     player.look_at_point(V(*pygame.mouse.get_pos()))
     player.attack_cooldown -= c.get_time()
     
+    max_attack_range = player.weapon.range*TILE_SIZE
     for creature in game_creatures:
         creature.attack_cooldown -= c.get_time()
 
         # player attacks mobs
-        max_attack_range = player.weapon.range*TILE_SIZE
         target = None
         if attack:
             angle_to_creature = pt.delta_to_degrees(pt.delta(player.pos, creature.pos)) + 90
             dist_to_creature = pt.dist(player.pos, creature.pos)
-            if dist_to_creature < max_attack_range and abs(angle_to_creature - player.rot) < 30 and player.attack_cooldown <= 0:
+            if dist_to_creature < max_attack_range and abs(angle_to_creature - player.rot) < 30:
                 target=creature
-        if target:
+        if target and player.attack_cooldown <= 0:
             player.attack(target)
                 
-        creature.move(*pt.delta(creature.pos, player.pos).aslist, SPEED*0.2 * c.get_time())
+        creature.move(*pt.delta(creature.pos, player.pos).aslist, SPEED*0.1 * c.get_time())
         creature.look_at_point(player.rel)
 
         # mobs attack player
@@ -144,7 +144,8 @@ def restart_game():
     common.game_humans.clear()
 
     creatures.make_player()
-    from creatures import player
+    player = creatures.player
+    player.gain_xp(0)
     pygame.time.set_timer(pygame.USEREVENT, 10000) # spawn creatures
     pygame.time.set_timer(pygame.USEREVENT + 1, player.regen) # regen player
 
@@ -162,7 +163,7 @@ while running:
             attack=True
         elif event.type == pygame.USEREVENT:
             if common.game_state == 'play':
-                spawn.spawn_creatures(common.creature_types['zombie'], 5)
+                spawn.spawn_creatures(common.wave_template, 5)
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
                 if common.game_state == 'game over':
@@ -170,6 +171,7 @@ while running:
             if event.key == pygame.K_e:
                 if common.game_state == 'play':
                     common.game_state = 'upgrade'
+                    if player.points>=1: player.weapon = creatures.make_weapon('crossbow')
                     saved_screen = w.copy()
                     #saved_screen = saved_screen.convert_alpha()
                 elif common.game_state == 'upgrade':

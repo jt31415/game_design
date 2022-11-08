@@ -64,10 +64,10 @@ class Creature:
     def look_at_point(self,point):
         dir=pt.delta(self.rel,point)
         angle=pt.delta_to_degrees(dir) + 90
-        if self.rot!= angle:
+        if self.rot != angle:
             self.rot = angle
             self.final_img = pygame.transform.rotate(self.scaled, self.rot) # resized and rotated image
-            self.weapon.final_img = pygame.transform.rotate(self.weapon.scaled, self.rot+90)
+        self.weapon.final_img = pygame.transform.rotate(self.weapon.scaled, self.rot+90)
 
     def move(self,dx,dy,speed):
         move_vec=V(dx,dy).normalized(speed)
@@ -103,10 +103,19 @@ class Human(Creature):
 
     def gain_xp(self, xp):
         self.experience+=xp
-        if self.experience>=100:
-            self.level += self.experience // 100
-            self.points += self.experience // 100
-            self.experience %= 100
+        level_up_amount = self.experience // 100
+        self.level += level_up_amount
+        self.points += level_up_amount
+        self.experience %= 100
+
+        #TODO: IMPLEMENT UPGRADE
+
+        if self.level >= 2:
+            common.wave_template = common.creature_types['ice_zombie']
+        elif self.level >= 1:
+            self.weapon = make_weapon('crossbow')
+        elif self.level >= 0:
+            common.wave_template = common.creature_types['zombie']
 
     def die(self):
         print("{} is dead".format(self.name))
@@ -116,6 +125,9 @@ class Human(Creature):
 def spawn_creature(template, pos):
     game_creatures.append(Creature(template[0], Weapon(*template[1]), *template[2:6], pos))
 
+def make_weapon(template):
+    return Weapon(*weapons[template])
+
 def make_player():
     global player
-    player = Human('Player', Weapon(*weapons['stick']))
+    player = Human('Player', make_weapon('stick'))
